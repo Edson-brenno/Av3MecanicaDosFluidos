@@ -2,6 +2,7 @@
 
 // Constantes
 const int bombaSubirSubmarinoPin = 8;
+const int bombaDescerSubmarinoPin = 7;
 
 SoftwareSerial Bluetooth(11, 10); // RX, TX
 
@@ -17,25 +18,35 @@ void tipoComando(char comando){
   else if (comando == '2'){
     descerSubmarino = true;
   }
-  else{
+  else if (comando == '3'){
     pararSubmarino = true;
   }
 }
 
 void analiseSubirSubmarino(){
   if (subirSubmarino == true){
-    Serial.println("Subindo submarino");
-    digitalWrite(bombaSubirSubmarinoPin, HIGH);
+    digitalWrite(bombaSubirSubmarinoPin, LOW);
+    pararSubmarino = false;
   }
   else{
-    digitalWrite(bombaSubirSubmarinoPin, LOW);
+    digitalWrite(bombaSubirSubmarinoPin, HIGH);
+  }
+}
+
+void analiseDescerSubmarino(){
+  if (descerSubmarino == true){
+    digitalWrite(bombaDescerSubmarinoPin, LOW);
+    pararSubmarino = false;
+  }
+  else{
+    digitalWrite(bombaDescerSubmarinoPin, HIGH);
   }
 }
 
 void analisePararSubmarino(){
   if (pararSubmarino == true){
-    Serial.println("parando submarino");
     subirSubmarino = false;
+    descerSubmarino = false;
     pararSubmarino = false;
   }
 }
@@ -55,14 +66,14 @@ void setup() {
   Serial.println("Bluetooth inicializado com sucesso!");
 
   // Configurando bombas
-  pinMode(8,OUTPUT);
+  pinMode(bombaDescerSubmarinoPin,OUTPUT);
+  pinMode(bombaSubirSubmarinoPin, OUTPUT);
 }
 
 void loop() {
-  digitalWrite(8, HIGH);
   analisePararSubmarino();
-
   analiseSubirSubmarino();
+  analiseDescerSubmarino();
 
   if (contador > 18){
       contador = 0;
@@ -70,17 +81,19 @@ void loop() {
 
   if (Bluetooth.available()) {
     char c = Bluetooth.read();
-    if (c == '+'){
-      contador += 1;
-    }
-    else if (contador > 0 && contador < 19){
-      contador += 1;
-    }
-    else{
-      // Serial.print("Recebido via Bluetooth: ");
-      // Serial.println(c);
-      tipoComando(c);
-    }
+    tipoComando(c);
+    // if (c == '+'){
+    //   contador += 1;
+    // }
+    // else if (contador > 0 && contador < 19){
+    //   contador += 1;
+    // }
+    // else{
+    //   // Serial.print("Recebido via Bluetooth: ");
+    //   // Serial.println(c);
+    //   Serial.println(c);
+    //   tipoComando(c);
+    // }
     
   }
 
