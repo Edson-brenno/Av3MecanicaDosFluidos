@@ -56,7 +56,7 @@ class MenuSubirSumarino:
 
     def main(self):
         os.system("cls")
-        self.__bluetooth_connection.send("1")
+        self.__bluetooth_connection.send("2")
         self.apresentacao_menu()
         self.__mostrar_opcoes()
         self.separador_de_linha()
